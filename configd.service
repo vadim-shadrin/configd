@@ -1,0 +1,15 @@
+[Unit]
+Description=configd watch on etcd keys and run command if change
+Requires=network-online.target
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+PermissionsStartOnly=true
+#ExecStartPre=/bin/sleep 5
+ExecStart=/usr/local/sbin/configd/configd
+Restart=on-failure
+
+[Install]
