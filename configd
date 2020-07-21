@@ -53,7 +53,7 @@ class Confd():
             os.system(cmd)
 
 c = Confd()
-print(f"I got this swarm_ip from config {self.conf['service']['config']['this_host_swarm_ip']} .Are you shure?")
+print(f"I got this swarm_ip from config {c.conf['service']['config']['this_host_swarm_ip']} .Are you shure?")
 while True:
     c.watch()
     sleep(0.5)
