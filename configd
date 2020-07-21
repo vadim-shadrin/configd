@@ -12,7 +12,6 @@ class Confd():
         self.script_dir = os.path.dirname(os.path.realpath(__file__))
         with open(f"{self.script_dir}/configd.yml") as f:
             self.conf = yaml.safe_load(f)
-        print(self.conf)
         self.etcd_url = 'http://127.0.0.1:2379'
         self.leader_ip = None
         self.get_watching_key()
@@ -31,7 +30,6 @@ class Confd():
 
     def watch(self):
         url = f"{self.etcd_url}/v2/keys/{self.conf['service']['config']['watching_key']}"
-        print(url)
         res = requests.get(url)
         try:
             if res.status_code == 200:
@@ -40,7 +38,6 @@ class Confd():
                     if 'value' in answer['node']:
                         leader_ip = answer['node']['value']
                         if str(leader_ip) != str(self.leader_ip):
-                            print ('!!!!!!!! == ', leader_ip, self.conf['service']['config']['this_host_swarm_ip'])
                             if str(leader_ip) == str(self.conf['service']['config']['this_host_swarm_ip']):
                                 if self.copy_config():
                                     self.run_commands()
@@ -50,12 +47,10 @@ class Confd():
 
     def copy_config(self):
         cmd = f"/usr/bin/cp {self.script_dir}/{self.conf['service']['config']['source']} {self.conf['service']['config']['desination']}"
-        print(cmd)
         return os.system(cmd)
 
     def run_commands(self):
         for cmd in self.conf['service']['config']['commands']:
-            print(cmd)
             os.system(cmd)
 
 c = Confd()
