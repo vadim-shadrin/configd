@@ -11,8 +11,6 @@ class Confd():
         with open(f"{self.script_dir}/configd.yml") as f:
             self.conf = yaml.safe_load(f)
         self.etcd_url = 'http://127.0.0.1:2379'
-        #self.leader_ip = None
-        #self.get_watching_key()
 
     def update_watching_key(self, value):
         res = requests.put(f"{self.etcd_url}/keys/{self.conf['service']['config']['watching_key']}", {"value": value} ,timeout=10)
