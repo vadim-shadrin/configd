@@ -14,18 +14,6 @@ class Confd():
         #self.leader_ip = None
         #self.get_watching_key()
 
-    def get_watching_key(self):
-        url = f"{self.etcd_url}/v2/keys/{self.conf['service']['config']['watching_key']}"
-        res = requests.get(url)
-        try:
-            if res.status_code == 200:
-                answer = res.json()
-                if 'node' in answer.keys():
-                    if 'value' in answer['node']:
-                        self.leader_ip = answer['node']['value']
-        except Exception as e:
-            print (e)
-
     def update_watching_key(self, value):
         res = requests.put(f"{self.etcd_url}/keys/{self.conf['service']['config']['watching_key']}", {"value": value} ,timeout=10)
         if res.status_code == '200':
