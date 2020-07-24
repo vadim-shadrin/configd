@@ -5,7 +5,7 @@ service:
     desination: /etc/netplan/60-floating-ip.yaml
     watching_key:
       leader_ip
-    this_host_swarm_ip: 10.1.0.14
+    this_host_swarm_ip: 10.1.0.15
     commands:
       - /usr/sbin/netplan apply
 

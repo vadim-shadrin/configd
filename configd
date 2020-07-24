@@ -39,8 +39,10 @@ class Confd():
                         leader_ip = answer['node']['value']
                         if str(leader_ip) != str(self.leader_ip):
                             if str(leader_ip) == str(self.conf['service']['config']['this_host_swarm_ip']):
-                                if self.copy_config():
+                                self.copy_config()
+                                if os.path.isfile(self.conf['service']['config']['desination']):
                                     self.run_commands()
+
         except Exception as e:
             print (e)
 
