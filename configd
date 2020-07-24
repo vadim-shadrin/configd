@@ -4,8 +4,6 @@ from time import sleep
 import requests
 import os
 
-
-
 class Confd():
     def __init__(self):
 
@@ -13,8 +11,8 @@ class Confd():
         with open(f"{self.script_dir}/configd.yml") as f:
             self.conf = yaml.safe_load(f)
         self.etcd_url = 'http://127.0.0.1:2379'
-        self.leader_ip = None
-        self.get_watching_key()
+        #self.leader_ip = None
+        #self.get_watching_key()
 
     def get_watching_key(self):
         url = f"{self.etcd_url}/v2/keys/{self.conf['service']['config']['watching_key']}"
@@ -28,6 +26,11 @@ class Confd():
         except Exception as e:
             print (e)
 
+    def update_watching_key(self, value):
+        res = requests.put(f"{self.etcd_url}/keys/{self.conf['service']['config']['watching_key']}", {"value": value} ,timeout=10)
+        if res.status_code == '200':
+            print (res.json())
+
     def watch(self):
         url = f"{self.etcd_url}/v2/keys/{self.conf['service']['config']['watching_key']}"
         res = requests.get(url)
@@ -36,12 +39,12 @@ class Confd():
                 answer = res.json()
                 if 'node' in answer.keys():
                     if 'value' in answer['node']:
-                        leader_ip = answer['node']['value']
-                        if str(leader_ip) != str(self.leader_ip):
-                            if str(leader_ip) == str(self.conf['service']['config']['this_host_swarm_ip']):
-                                self.copy_config()
-                                if os.path.isfile(self.conf['service']['config']['desination']):
-                                    self.run_commands()
+                        is_reload = answer['node']['value']
+                        if int(is_reload) == 1:
+                            self.copy_config()
+                            if os.path.isfile(self.conf['service']['config']['desination']):
+                                self.run_commands()
+                            self.update_watching_key(0)
 
         except Exception as e:
             print (e)
